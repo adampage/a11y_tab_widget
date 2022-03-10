@@ -3,12 +3,27 @@
   position: relative;
 }
 
-.atabs__list:not([aria-orientation="vertical"]) {
+.atabs__list__wrapper {
+  overflow: auto;
+  scroll-behavior: smooth;
+  inline-size: 100%;
+  background-image: linear-gradient(to right, white, white),
+    linear-gradient(to right, white, white),
+    linear-gradient(to right, rgba(0, 0, 0, 0.25), rgba(255, 255, 255, 0)),
+    linear-gradient(to left, rgba(0, 0, 0, 0.25), rgba(255, 255, 255, 0));
+  background-position: left center, right center, left center, right center;
+  background-repeat: no-repeat;
+  background-color: white;
+  background-size: 20px 100%, 20px 100%, 10px 100%, 10px 100%;
+  background-attachment: local, local, scroll, scroll;
   border-left: 1px solid #999;
   border-right: 1px solid #999;
   border-top: 1px solid #999;
+  border-bottom: 1px solid black;
+}
+
+.atabs__list:not([aria-orientation="vertical"]) {
   display: flex;
-  overflow: auto;
   white-space: nowrap;
 }
 
@@ -73,37 +88,52 @@
  * these should also be removed from the DOM
  */
 .atabs__list > :not([role="tab"]) {
-  display: none;
+  /* TODO: investigate */
+  /*display: none;*/
+}
+
+.atabs__list__tabwrapper {
+  display: flex;
+  flex-grow:  1;
+  color: black;
+}
+
+.atabs__list__tabwrapper:not(:last-of-type) {
+  border-right: 1px solid;
+}
+
+.atabs__list__tabwrapper:hover {
+  background: #4464c2;
+  color: white;
+}
+
+.atabs__list__tabwrapper.selected,
+.atabs__list__tabwrapper.selected:hover {
+  background-color: #213469;
+  color:  white;
+}
+
+.atabs__list__tabwrapper.focused {
+  outline: 2px solid currentColor;
+  outline-offset: -4px;
 }
 
 .atabs__list__tab {
   -webkit-appearance: none; /* btn */
   appearance: none; /* btn */
-  background: #fff;
+  background: transparent;
   border: 0; /* btn */
-  border-bottom: 1px solid;
   flex-grow: 1;
   font: inherit; /* btn */
   margin: 0; /* btn */
   padding: .825em 1em;
   position: relative;
   text-decoration: none; /* if <a> */
+  cursor: default;
 }
 
-.atabs__list__tab:not(:last-of-type) {
-  border-right: 1px solid;
-}
-
-.atabs__list__tab:active,
-.atabs__list__tab:hover,
-.atabs__list__tab:focus {
-  background: #4464c2;
-  color: #fff;
-  outline: 2px solid #4464c2;
-  outline-offset: -2px;
-}
-
-.atabs__list__tab[aria-disabled="true"] {
+.atabs__list__tab[aria-disabled="true"],
+.atabs__list__close[disabled] {
   cursor: not-allowed;
   opacity: 0.5;
 }
@@ -114,15 +144,46 @@
   pointer-events: none;
 }
 
-.atabs__list__tab[aria-selected="true"] {
-  background: #213469;
-  border-bottom: 3px solid #213469; /* high contrast vid */
-  color: #fff;
+.atabs__list__tab[aria-selected="true"],
+.atabs__list__close:focus {
+  /*background: #213469;*/
+  /* TODO: Investigate and re-introduce: */
+  /*border-bottom: 3px solid #213469;*/  /* high contrast vid */
+  /*color: currentColor;*/
 }
 
-.atabs__list__tab[aria-selected="true"]:hover,
-.atabs__list__tab[aria-selected="true"]:focus {
-  box-shadow: inset 0 1px 0 4px #fff;
+.atabs__list__tab:focus,
+.atabs__list__tab:focus-visible,
+.atabs__list__close:focus,
+.atabs__list__close:focus-visible {
+  outline: 2px solid transparent;
+}
+
+.atabs__list__close {
+  -webkit-appearance:  none;
+  appearance: none;
+  padding: 0.75em;
+  display: flex;
+  align-items: stretch;
+  justify-content:  stretch;
+  background-color:  transparent;
+  color: currentColor;
+  border: 0;
+  font-family:  '';
+}
+
+.atabs__list__close:hover > span,
+.atabs__list__close:focus > span {
+  border-color:  white;
+  background-color:  darkred;
+}
+
+.atabs__list__close > span {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-inline: 0.5em;
+  border:  2px solid transparent;
 }
 
 .atabs__panel[hidden] {

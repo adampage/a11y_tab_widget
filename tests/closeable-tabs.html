@@ -2,7 +2,7 @@
 <html lang="en-us" class="no-js">
 <head>
     <meta charset="utf-8">
-    <title>Disabled Tab test | ARIA Tabs</title>
+    <title>Closeable Tabs test | ARIA Tabs</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <script>document.documentElement.className = document.documentElement.className.replace('no-js', 'js');</script>
     <link rel="stylesheet" href="../assets/css/tabs.css">
@@ -14,82 +14,330 @@
 
     <header>
         <h1>
-            Tab widget with one disabled Tab
+            Tab Widget with Closeable Tabs
         </h1>
-        <p>
-            The disabled Tab is not focusable via sequential keyboard navigation with the <kbd>TAB</kbd> key, arrow keys
-            or pointer device (mouse, etc.) clicks. Consequently, the disabled Tab cannot activate a panel.
-        </p>
+
         <nav>
             <a href="../index.html">Back to index</a>
             <a href="https://github.com/scottaohara/a11y_tab_widget">GitHub Repo</a>
+            <a href="#documentation">Jump to documentation</a>
         </nav>
+
     </header>
 
     <main>
-        <div data-atabs>
-            <section id="a" data-atabs-panel>
-                <h3 data-atabs-heading>
-                    Apples
-                </h3>
-                <p>
-                    No explicit default was set, so per standard functionality
-                    this first <code>tabpanel</code> will be shown by default.
-                </p>
-                <p>
-                    Here's a <a href="#">link just to test</a> keyboard tabbing.
-                    (it's odd talking about <code>tab</code>s, and <kbd>tab</kbd>s.)
-                </p>
-            </section>
-            <section id="b" data-atabs-panel>
-                <h3 data-atabs-heading="keep">
-                    Bananas
-                </h3>
-                <p data-atabs-heading>
-                    This is an example of a heading being used to populate the
-                    <code>tab</code>'s label, while also not removing heading
-                    from the <code>tabpanel</code>.  This is done by adding
-                    the value "keep" to <code>data-atabs-heading</code>.
-                </p>
-            </section>
-            <section id="c" data-atabs-panel data-atabs-tab-label="Oranges">
-                <h3>
-                    There are two headings here
-                </h3>
-                <p>
-                    The <code>tab</code> is getting its label from the
-                    <code>data-atabs-tab-label</code>.  The heading is
-                    kept in the <code>tabpanel</code> because it does
-                    <b>not</b> have the <code>data-atabs-heading</code>
-                    attribute.
-                </p>
-                <h4>It wouldn't make much sense</h4>
-                <p>
-                    If the contents of a <code>tabpanel</code> contain
-                    additional sub headings, it wouldn't make sense to remove
-                    the initial heading from the <code>tabpanel</code>.
-                    Doing so would create a gap in the heading structure.
-                </p>
-                <h3>Special demo: enabled a disabled tab</h3>
-                <p>There are some cases, e.g. in a multi-step process, where a user completes a task in an exposed
-                    tab panel or panels, and then by completion of that task a previously disabled tab becomes enabled.
-                </p>
-                <p>The following button showcases how that could be implemented for the disabled "Mangos" tab.</p>
-                <button id="enableTabDemo">Click here to enable the "Mangos" tab.</button>
-            </section>
-            <section id="mangos" data-atabs-panel data-atabs-disabled>
-                <h3 data-atabs-heading>
-                    Mangos (out of stock)
-                </h3>
-                <p>This text will never be visible, unless the tab is enabled via JS. Please refer to the demo button
-                    in the "Oranges" tab for an example how this could be achieved.</p>
-            </section>
-        </div>
+
+        <article id="demo">
+
+            <h2>Demo</h2>
+
+            <p>
+                <button id="addTabAtStart">Add a tab at start</button>
+                <button id="addTabAtEnd">Add a tab at end</button>
+                <a href="/tests/closeable-tabs.html">Reset</a>
+            </p>
+
+            <div data-atabs data-atabs-closeable>
+                <section id="a" data-atabs-panel>
+                    <h3 data-atabs-heading>
+                        Apples
+                    </h3>
+                    <p>
+                        No explicit default was set, so per standard functionality
+                        this first <code>tabpanel</code> will be shown by default.
+                    </p>
+                    <p>
+                        Here's a <a href="#">link just to test</a> keyboard tabbing.
+                        (it's odd talking about <code>tab</code>s, and <kbd>tab</kbd>s.)
+                    </p>
+                </section>
+                <section id="b" data-atabs-panel>
+                    <h3 data-atabs-heading="keep">
+                        Bananas
+                    </h3>
+                    <p data-atabs-heading>
+                        This is an example of a heading being used to populate the
+                        <code>tab</code>'s label, while also not removing heading
+                        from the <code>tabpanel</code>.  This is done by adding
+                        the value "keep" to <code>data-atabs-heading</code>.
+                    </p>
+                </section>
+                <section id="c" data-atabs-panel data-atabs-tab-label="Oranges">
+                    <h3>
+                        There are two headings here
+                    </h3>
+                    <p>
+                        The <code>tab</code> is getting its label from the
+                        <code>data-atabs-tab-label</code>.  The heading is
+                        kept in the <code>tabpanel</code> because it does
+                        <b>not</b> have the <code>data-atabs-heading</code>
+                        attribute.
+                    </p>
+                    <h4>It wouldn't make much sense</h4>
+                    <p>
+                        If the contents of a <code>tabpanel</code> contain
+                        additional sub headings, it wouldn't make sense to remove
+                        the initial heading from the <code>tabpanel</code>.
+                        Doing so would create a gap in the heading structure.
+                    </p>
+                    <h3>Special demo: enabled a disabled tab</h3>
+                    <p>There are some cases, e.g. in a multi-step process, where a user completes a task in an exposed
+                        tab panel or panels, and then by completion of that task a previously disabled tab becomes enabled.
+                    </p>
+                    <p>The following button showcases how that could be implemented for the disabled "Mangos" tab.</p>
+                    <button id="enableTabDemo">Click here to enable the "Mangos" tab.</button>
+                </section>
+                <section id="d" data-atabs-panel>
+                    <h3 data-atabs-heading>
+                        Durian
+                    </h3>
+                    <p>
+                        The durian (/ˈdjʊəriən/)[2] is the edible fruit of
+                        several tree species belonging to the genus Durio.
+                        There are 30 recognised Durio species, native to
+                        Indonesia, Malaysia, the Philippines, and Thailand; at
+                        least nine of which produce edible fruit.[3][4] Durio
+                        zibethinus, native to Borneo and Sumatra, is the only
+                        species available in the international
+                        market.[citation needed] It has over 300 named
+                        varieties in Thailand and 100 in Malaysia, as of 1987.
+                        Other species are sold in their local regions.[3]
+                    </p>
+                    <p>
+                        Named in some regions as the "king of fruits",[5] the
+                        durian is distinctive for its large size, strong
+                        odour, and thorn-covered rind. The fruit can grow as
+                        large as 30 centimetres (12 inches) long and 15 cm (6
+                        in) in diameter, and it typically weighs 1 to 3
+                        kilograms (2 to 7 pounds). Its shape ranges from
+                        oblong to round, the colour of its husk green to
+                        brown, and its flesh pale yellow to red, depending on
+                        the species.
+                    </p>
+                </section>
+
+                <section id="mangos" data-atabs-panel data-atabs-disabled>
+                    <h3 data-atabs-heading>
+                        Mangos (out of stock)
+                    </h3>
+                    <p>This text will never be visible, unless the tab is enabled via JS. Please refer to the demo button
+                        in the "Oranges" tab for an example how this could be achieved.</p>
+                </section>
 
 
-        <button>
-            I'm merely here for testing purposes. Don't press me.
-        </button>
+                <section id="e" data-atabs-panel>
+                    <h3 data-atabs-heading>
+                        Lychee
+                    </h3>
+                    <p>
+                        Lychee, (Litchi chinensis), also spelled litchi or
+                        lichi, evergreen tree of the soapberry family
+                        (Sapindaceae), grown for its edible fruit. Lychee is
+                        native to Southeast Asia and has been a favourite
+                        fruit of the Cantonese since ancient times. The fruit
+                        is usually eaten fresh but can also be canned or
+                        dried.
+                    </p>
+                </section>
+
+                <section id="e" data-atabs-panel>
+                    <h3 data-atabs-heading>
+                        Dragon Fruit
+                    </h3>
+                    <p>
+                        These fruits are commonly known in English as "dragon
+                        fruit", a name used since around 1963, apparently
+                        resulting from the leather-like skin and prominent
+                        scaly spikes on the fruit's exterior.[3] The names
+                        pitahaya and pitaya derive from Mexico, and pitaya
+                        roja in Central America and northern South America,
+                        possibly relating to pitahaya for names of tall cacti
+                        species with flowering fruit.[2][4] The fruit may also
+                        be known as a strawberry pear.[5]
+                    </p>
+                </section>
+
+                <section id="e" data-atabs-panel>
+                    <h3 data-atabs-heading>
+                        Mangosteen
+                    </h3>
+                    <p>
+                        Mangosteen (Garcinia mangostana), also known as the
+                        purple mangosteen,[1] is a tropical evergreen tree
+                        with edible fruit native to tropical lands surrounding
+                        the Indian Ocean. Its origin is uncertain due to
+                        widespread prehistoric cultivation.[2][3] It grows
+                        mainly in Southeast Asia, southwest India and other
+                        tropical areas such as Colombia, Puerto Rico and
+                        Florida,[2][4][5] where the tree has been introduced.
+                        The tree grows from 6 to 25 metres (20 to 82 feet)
+                        tall.[2] The fruit of the mangosteen is sweet and
+                        tangy, juicy, somewhat fibrous, with fluid-filled
+                        vesicles (like the flesh of citrus fruits), with an
+                        inedible, deep reddish-purple colored rind (exocarp)
+                        when ripe.[2][4] In each fruit, the fragrant edible
+                        flesh that surrounds each seed is botanically
+                        endocarp, i.e., the inner layer of the ovary.[6][7]
+                        The seeds are of similar size and shape to almonds.
+                    </p>
+                    <p>
+                        Mangosteen belongs to the same genus as the other,
+                        less widely known fruit, such as the button mangosteen
+                        (G. prainiana) or the charichuelo (G. madruno).
+                    </p>
+                </section>
+
+            </div>
+
+            <p>
+                <button>
+                    I'm merely here for testing purposes. Don't press me.
+                </button>
+            </p>
+        </article>
+
+        <article id="documentation">
+            <h2>Documentation</h2>
+            <h3>Overview</h3>
+            <p>
+                Afford each tab a “close” operation with a universally percievable
+                signifier, enabling all users to delete that tab and its
+                corresponding panel from the set.
+            </p>
+            <h3>Sample use case</h3>
+            <p>
+                A web-based text editor that allows users to open multiple
+                text files simultaneously and collectively presents them in a
+                tabbed interface.  Each open file’s tab presents an
+                <button><span aria-hidden="true">&#10005</span><span
+                class="visually-hidden">Close tab</span></button> button which
+                allows the user to close that file.
+            </p>
+            <h3>Requirements</h3>
+            <ul>
+                <li>
+                    Do not sabotage reporting of the <code>tablist</code>,
+                    <code>tab</code>, and <code>tabpanel</code> roles to
+                    assitive tech.
+                </li>
+                <li>
+                    Ensure keyboard operability of the close operation’s
+                    perceivable signifier while conforming to the <a
+                    href="https://www.w3.org/TR/wai-aria-practices/#keyboard-interaction-21">keyboard
+                    interactions</a> recommended by WAI-ARIA.
+                    <ul>
+                        <li>
+                            WAI-ARIA says: <q>When the tab list contains the
+                            focus, [<kbd>Tab</kbd>] moves focus <strong>to the
+                            next element in the page tab sequence outside the
+                            tablist</strong>, which is the tabpanel unless the
+                            first element containing meaningful content inside
+                            the tabpanel is focusable.</q>  My solution
+                            violates the part I’ve bolded, but I wonder if
+                            there’s wiggle room on that point.
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    Enable the user to also perform the close operation by
+                    pressing the <kbd>Delete</kbd> while focused on the
+                    desired tab.
+                </li>
+                <li>
+                    <a
+                    href="https://www.w3.org/TR/wai-aria-practices/#:~:text=opens%20the%20menu.-,Delete%20(Optional),-%3A%20If%20deletion%20is">Set
+                    focus predictably</a> upon deletion of tab.
+                </li>
+                <li>
+                    Provide a sufficiently descriptive text label for the
+                    close button.
+                </li>
+                <li>
+                    Do not afford disabled tabs the close operation.
+                </li>
+            </ul>
+            <h3>Test coverage</h3>
+            <ul>
+                <li>
+                    Tested with:
+                    <ul>
+                        <li>Mac OS Catalina 12.1 + VoiceOver + Safari 15.3.  Promising results, but needs more testing.</li>
+                    </ul>
+                </li>
+                <li>
+                    Not yet tested with:
+                    <ul>
+                        <li>Windows</li>
+                        <li>iOS</li>
+                        <li>Android</li>
+                        <li>JAWS</li>
+                        <li>NVDA</li>
+                        <li>High contrast mode</li>
+                    </ul>
+                </li>
+            </ul>
+            <h3>Known Issues</h3>
+            <ul>
+                <li>
+                    New styles are quick &amp; dirty.
+                </li>
+                <li>
+                    I temporarily disabled styles that appeared to target high
+                    contrast mode while incorporating my own changes.  Need to
+                    investigate and re-introduce.
+                </li>
+                <li>
+                    I broke the vertical orientation styles. (>_<)
+                </li>
+                <li>
+                    New JavaScript is quick &amp; dirty, and I may have
+                    carelessly introduced ES6 dependency.
+                </li>
+                <li>
+                    The close button’s visible X is an SVG currently embedded
+                    in the JavaScript. Yuck.
+                </li>
+                <li>
+                    Deletion of the last remaining tab fails to set
+                    appropriate focus to another logical element onthe page.
+                    This should probably be configurable for the adopting
+                    context, but maybe the first preceding interactive element
+                    on the page?
+                </li>
+                <li>
+                    Still need to test for tab configurations with:
+                    <ul>
+                        <li>Vertical tabs</li>
+                        <li>Nested tabs</li>
+                        <li>Disabled tabs</li>
+                        <li>Manual activation</li>
+                    </ul>
+                <li>
+                    I’ve rigged it so that when a user has brought focus to a
+                    tab’s close <code>button</code>, they may still use arrow
+                    keys to navigate the tab list.  This feels true to the
+                    spirit of the ARIA pattern???
+                </li>
+                <li>
+                    I’m still chewing on how best to allow for the close
+                    buttons to get sufficiently descriptive labels.  The
+                    solution should be friendly to localization.  For example,
+                    it’ll probably be a bad idea to programatically assemble
+                    string fragments. Maybe a content author should be
+                    expected to provide text for each closeable tab (e.g.,
+                    <code>data-tab-delete-label="Close the Apples
+                    tab"</code>).  For now, I’m just hardcoding an English
+                    label of "Close tab" inside the JavaScript.
+                </li>
+                <li>
+                    Unrelated to my own changes, but I’m thinking disabled
+                    tabs (and the disabled close buttons) they contain should
+                    not visibly react to hover as strongly as they currently
+                    do, if at all?
+                </li>
+            </ul>
+        </article>
+
     </main>
 
 </div> <!-- /.page (demo layout) -->
@@ -110,21 +358,170 @@
     // Provide a demo for enabling an initially disabled tab via user input
     var enableTabButton = document.getElementById("enableTabDemo");
     var mangosTab = document.querySelector('[data-controls="mangos"]');
+    var mangosGroup = mangosTab.parentNode;
     var mangosPanel = document.getElementById('mangos');
     var cloneMangos = mangosPanel.cloneNode(true);
     var cloneHeading = mangosTab.textContent;
 
     enableTabButton.addEventListener('click', function() {
+        alert('I’ve temporarily remove this tab-enabling demo function while I focus on tab removal functionality.');
+
         // remove the disbled instance of the mangos tab/panel from the document
-        mangosTab.parentNode.removeChild(mangosTab);
-        mangosPanel.parentNode.removeChild(mangosPanel);
+        // mangosGroup.parentNode.removeChild(mangosGroup);
+        // mangosPanel.parentNode.removeChild(mangosPanel);
 
         // prepare initial source for re-initialization as enabled tab
-        cloneMangos.removeAttribute('data-atabs-disabled');
+        // cloneMangos.removeAttribute('data-atabs-disabled');
 
         // inject the cloned and enabled content into the widget
-        allTabs[0].addTab(cloneMangos, cloneHeading);
+        // allTabs[0].addTab(cloneMangos, cloneHeading);
     })
+
+    var addTabAtStartButton = document.getElementById("addTabAtStart");
+    var addTabAtEndButton = document.getElementById("addTabAtEnd");
+    let idNew = 0;
+
+    const fruits = [
+        { name: "Abiu", url: "https://simple.wikipedia.org/wiki/Abiu" },
+        { name: "Açaí", url: "https://simple.wikipedia.org/wiki/A%C3%A7a%C3%AD" },
+        { name: "Acerola", url: "https://simple.wikipedia.org/wiki/Acerola" },
+        { name: "Ackee", url: "https://simple.wikipedia.org/wiki/Ackee" },
+        { name: "African cucumber", url: "https://simple.wikipedia.org/wiki/African_cucumber" },
+        { name: "Apricot", url: "https://simple.wikipedia.org/wiki/Apricot" },
+        { name: "Avocado", url: "https://simple.wikipedia.org/wiki/Avocado" },
+        { name: "Bilberry", url: "https://simple.wikipedia.org/wiki/Bilberry" },
+        { name: "Blackberry", url: "https://simple.wikipedia.org/wiki/Blackberry" },
+        { name: "Blackcurrant", url: "https://simple.wikipedia.org/wiki/Blackcurrant" },
+        { name: "Black sapote", url: "https://simple.wikipedia.org/wiki/Black_sapote" },
+        { name: "Blueberry", url: "https://simple.wikipedia.org/wiki/Blueberry" },
+        { name: "Boysenberry", url: "https://simple.wikipedia.org/wiki/Boysenberry" },
+        { name: "Breadfruit", url: "https://simple.wikipedia.org/wiki/Breadfruit" },
+        { name: "Buddha's hand", url: "https://simple.wikipedia.org/wiki/Buddha%27s_hand" },
+        { name: "Cactus pear", url: "https://simple.wikipedia.org/wiki/Cactus_pear" },
+        { name: "Canistel", url: "/w/index.php?title=Canistel&amp;action=edit&amp;redlink=1" },
+        { name: "Cashew", url: "https://simple.wikipedia.org/wiki/Cashew" },
+        { name: "Cempedak", url: "/w/index.php?title=Cempedak&amp;action=edit&amp;redlink=1" },
+        { name: "Custard Apple", url: "https://simple.wikipedia.org/wiki/Cherimoya" },
+        { name: "Cherry", url: "https://simple.wikipedia.org/wiki/Cherry" },
+        { name: "Chico fruit", url: "https://simple.wikipedia.org/wiki/Chico_fruit" },
+        { name: "Cloudberry", url: "https://simple.wikipedia.org/wiki/Cloudberry" },
+        { name: "Coco De Mer", url: "/w/index.php?title=Coco_De_Mer&amp;action=edit&amp;redlink=1" },
+        { name: "Coconut", url: "https://simple.wikipedia.org/wiki/Coconut" },
+        { name: "Crab apple", url: "https://simple.wikipedia.org/wiki/Crab_apple" },
+        { name: "Cranberry", url: "https://simple.wikipedia.org/wiki/Cranberry" },
+        { name: "Currant", url: "https://simple.wikipedia.org/wiki/Currant" },
+        { name: "Damson", url: "https://simple.wikipedia.org/wiki/Damson" },
+        { name: "Date", url: "https://simple.wikipedia.org/wiki/Date_palm" },
+        { name: "Dragonfruit", url: "https://simple.wikipedia.org/wiki/Dragonfruit" },
+        { name: "Egg Fruit", url: "https://simple.wikipedia.org/wiki/Egg_Fruit" },
+        { name: "Elderberry", url: "https://simple.wikipedia.org/wiki/Elderberry" },
+        { name: "Feijoa", url: "https://simple.wikipedia.org/wiki/Feijoa" },
+        { name: "Fig", url: "https://simple.wikipedia.org/wiki/Fig" },
+        { name: "Finger Lime", url: "/w/index.php?title=Finger_Lime&amp;action=edit&amp;redlink=1" },
+        { name: "Goji berry", url: "https://simple.wikipedia.org/wiki/Goji_berry" },
+        { name: "Gooseberry", url: "https://simple.wikipedia.org/wiki/Gooseberry" },
+        { name: "Grape", url: "https://simple.wikipedia.org/wiki/Grape" },
+        { name: "Raisin", url: "https://simple.wikipedia.org/wiki/Raisin" },
+        { name: "Grapefruit", url: "https://simple.wikipedia.org/wiki/Grapefruit" },
+        { name: "Grewia asiatica", url: "https://simple.wikipedia.org/wiki/Grewia_asiatica_(phalsa_or_falsa)" },
+        { name: "Guava", url: "https://simple.wikipedia.org/wiki/Guava" },
+        { name: "Hala Fruit", url: "/w/index.php?title=Hala_Fruit&amp;action=edit&amp;redlink=1" },
+        { name: "Honeyberry", url: "https://simple.wikipedia.org/wiki/Honeyberry" },
+        { name: "Huckleberry", url: "https://simple.wikipedia.org/wiki/Huckleberry" },
+        { name: "Jabuticaba", url: "https://simple.wikipedia.org/wiki/Jabuticaba" },
+        { name: "Jackfruit", url: "https://simple.wikipedia.org/wiki/Jackfruit" },
+        { name: "Jambul", url: "https://simple.wikipedia.org/wiki/Jambul" },
+        { name: "Japanese plum", url: "https://simple.wikipedia.org/wiki/Japanese_plum" },
+        { name: "Jostaberry", url: "https://simple.wikipedia.org/wiki/Jostaberry" },
+        { name: "Jujube", url: "https://simple.wikipedia.org/wiki/Jujube" },
+        { name: "Juniper berry", url: "https://simple.wikipedia.org/wiki/Juniper_berry" },
+        { name: "Kaffir Lime", url: "/w/index.php?title=Kaffir_Lime&amp;action=edit&amp;redlink=1" },
+        { name: "Horned melon", url: "https://simple.wikipedia.org/wiki/Kiwano" },
+        { name: "Kiwifruit", url: "https://simple.wikipedia.org/wiki/Kiwifruit" },
+        { name: "Kumquat", url: "https://simple.wikipedia.org/wiki/Kumquat" },
+        { name: "Lemon", url: "https://simple.wikipedia.org/wiki/Lemon" },
+        { name: "Lime", url: "https://simple.wikipedia.org/wiki/Lime" },
+        { name: "Loganberry", url: "https://simple.wikipedia.org/wiki/Loganberry" },
+        { name: "Longan", url: "https://simple.wikipedia.org/wiki/Longan" },
+        { name: "Loquat", url: "https://simple.wikipedia.org/wiki/Loquat" },
+        { name: "Lulo", url: "https://simple.wikipedia.org/wiki/Lulo" },
+        { name: "Magellan Barberry", url: "/w/index.php?title=Magellan_Barberry&amp;action=edit&amp;redlink=1" },
+        { name: "Mamey Apple", url: "https://simple.wikipedia.org/wiki/Mamey_Apple" },
+        { name: "Mamey Sapote", url: "/w/index.php?title=Mamey_Sapote&amp;action=edit&amp;redlink=1" },
+        { name: "Marionberry", url: "https://simple.wikipedia.org/wiki/Marionberry" },
+        { name: "Melon", url: "https://simple.wikipedia.org/wiki/Melon" },
+        { name: "Cantaloupe", url: "https://simple.wikipedia.org/wiki/Cantaloupe" },
+        { name: "Galia melon", url: "https://simple.wikipedia.org/wiki/Galia_melon" },
+        { name: "Honeydew", url: "https://simple.wikipedia.org/wiki/Honeydew_(melon)" },
+        { name: "Mouse melon", url: "https://simple.wikipedia.org/wiki/Mouse_melon" },
+        { name: "Musk melon", url: "https://simple.wikipedia.org/wiki/Musk_melon" },
+        { name: "Watermelon", url: "https://simple.wikipedia.org/wiki/Watermelon" },
+        { name: "Miracle fruit", url: "https://simple.wikipedia.org/wiki/Miracle_fruit" },
+        { name: "Monstera deliciosa", url: "https://simple.wikipedia.org/wiki/Monstera_deliciosa" },
+        { name: "Mulberry", url: "https://simple.wikipedia.org/wiki/Mulberry" },
+        { name: "Nance", url: "https://simple.wikipedia.org/wiki/Nance" },
+        { name: "Nectarine", url: "https://simple.wikipedia.org/wiki/Nectarine" },
+        { name: "Blood orange", url: "https://simple.wikipedia.org/wiki/Blood_orange" },
+        { name: "Clementine", url: "https://simple.wikipedia.org/wiki/Clementine" },
+        { name: "Mandarine", url: "https://simple.wikipedia.org/wiki/Mandarine" },
+        { name: "Tangerine", url: "https://simple.wikipedia.org/wiki/Tangerine" },
+        { name: "Papaya", url: "https://simple.wikipedia.org/wiki/Papaya" },
+        { name: "Passionfruit", url: "https://simple.wikipedia.org/wiki/Passionfruit" },
+        { name: "Pawpaw", url: "/w/index.php?title=Pawpaw&amp;action=edit&amp;redlink=1" },
+        { name: "Peach", url: "https://simple.wikipedia.org/wiki/Peach" },
+        { name: "Pear", url: "https://simple.wikipedia.org/wiki/Pear" },
+        { name: "Persimmon", url: "https://simple.wikipedia.org/wiki/Persimmon" },
+        { name: "Plantain", url: "https://simple.wikipedia.org/wiki/Plantain" },
+        { name: "Plum", url: "https://simple.wikipedia.org/wiki/Plum" },
+        { name: "Prune", url: "https://simple.wikipedia.org/wiki/Prune" },
+        { name: "Pineapple", url: "https://simple.wikipedia.org/wiki/Pineapple" },
+        { name: "Pineberry", url: "https://simple.wikipedia.org/wiki/Pineberry" },
+        { name: "Plumcot", url: "https://simple.wikipedia.org/wiki/Plumcot" },
+        { name: "Pomegranate", url: "https://simple.wikipedia.org/wiki/Pomegranate" },
+        { name: "Pomelo", url: "https://simple.wikipedia.org/wiki/Pomelo" },
+        { name: "Quince", url: "https://simple.wikipedia.org/wiki/Quince" },
+        { name: "Raspberry", url: "https://simple.wikipedia.org/wiki/Raspberry" },
+        { name: "Salmonberry", url: "https://simple.wikipedia.org/wiki/Salmonberry" },
+        { name: "Rambutan", url: "https://simple.wikipedia.org/wiki/Rambutan" },
+        { name: "Redcurrant", url: "https://simple.wikipedia.org/wiki/Redcurrant" },
+        { name: "Rose apple", url: "/w/index.php?title=Rose_apple&amp;action=edit&amp;redlink=1" },
+        { name: "Salal berry", url: "https://simple.wikipedia.org/wiki/Salal" },
+        { name: "Salak", url: "https://simple.wikipedia.org/wiki/Salak" },
+        { name: "Satsuma", url: "https://simple.wikipedia.org/wiki/Satsuma" },
+        { name: "Hawthorn Berry", url: "/w/index.php?title=Sloe_or_Hawthorn_Berry&amp;action=edit&amp;redlink=1" },
+        { name: "Soursop", url: "https://simple.wikipedia.org/wiki/Soursop" },
+        { name: "Star apple", url: "https://simple.wikipedia.org/wiki/Star_apple" },
+        { name: "Star fruit", url: "https://simple.wikipedia.org/wiki/Star_fruit" },
+        { name: "Strawberry", url: "https://simple.wikipedia.org/wiki/Strawberry" },
+        { name: "Surinam cherry", url: "https://simple.wikipedia.org/wiki/Surinam_cherry" },
+        { name: "Tamarillo", url: "https://simple.wikipedia.org/wiki/Tamarillo" },
+        { name: "Tamarind", url: "https://simple.wikipedia.org/wiki/Tamarind" },
+        { name: "Tangelo", url: "https://simple.wikipedia.org/wiki/Tangelo" },
+        { name: "Tayberry", url: "https://simple.wikipedia.org/wiki/Tayberry" },
+        { name: "Ugli fruit", url: "https://simple.wikipedia.org/wiki/Ugli_fruit" },
+        { name: "White currant", url: "https://simple.wikipedia.org/wiki/White_currant" },
+        { name: "White sapote", url: "https://simple.wikipedia.org/wiki/White_sapote" },
+        { name: "Yuzu", url: "https://simple.wikipedia.org/wiki/Yuzu" }
+    ];
+
+    addNewFruit = function( atEnd = true ) {
+        const tabListWrapper = allTabs[0].getTabList().parentNode;
+        const fruit = fruits[Math.floor(Math.random() * fruits.length)];
+        let newFruitTab = document.createElement('section');
+        newFruitTab.id = fruit.name + '-' + ++idNew;
+        newFruitTab.innerHTML = '<p>We have nothing to say about it, but Simple English Wikipedia has <a href="' + fruit.url + '">a nice article about the ' + fruit.name + '<a>.</p>';
+        allTabs[0].addTab(newFruitTab, fruit.name, '', atEnd, true);
+        tabListWrapper.scrollLeft = atEnd ? tabListWrapper.scrollWidth : 0;
+    }
+
+    addTabAtStartButton.addEventListener('click', function() {
+        addNewFruit(false);
+    });
+
+    addTabAtEndButton.addEventListener('click', function() {
+        addNewFruit(true);
+    });
+
 </script>
 </body>
 </html>

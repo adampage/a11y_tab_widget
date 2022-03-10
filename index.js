@@ -134,9 +134,14 @@ var util = {
     panelSelector: '[data-atabs-panel]',
     tabClass: 'atabs__list__tab',
     tabListClass: 'atabs__list',
+    tabListWrapperClass: 'atabs__list__wrapper',
+    btnCloseClass: 'atabs__list__close',
+    tabWrapperClass: 'atabs__list__tabwrapper',
     tablistSelector: '[data-atabs-list]',
     manualAttribute: 'data-atabs-manual',
-    manual: false
+    manual: false,
+    closeableAttribute: 'data-atabs-closeable',
+    closeable: false
   };
 
 
@@ -162,6 +167,10 @@ var util = {
 
       if ( el.hasAttribute(_options.manualAttribute) ) {
         _options.manual = true;
+      }
+
+      if ( el.hasAttribute(_options.closeableAttribute) ) {
+        _options.closeable = true;
       }
 
       el.classList.add(_options.elClass);
@@ -191,17 +200,30 @@ var util = {
       if ( orientation === 'vertical' ) {
         tabListContainer.setAttribute('aria-orientation', orientation);
       }
-      el.insertBefore(tabListContainer, el.querySelector(':first-child'));
+
+      var tabListWrapper = doc.createElement('div');
+      tabListWrapper.classList.add(_options.tabListWrapperClass);
+
+      el.insertBefore(tabListWrapper, el.querySelector(':first-child'));
+      tabListWrapper.appendChild(tabListContainer);
 
       return tabListContainer;
     }; // generateTablistContainer()
 
+    this.getTabList = function () {
+      return _tabListContainer;
+    }
 
-    this.addTab = function ( panel, label, customClass ) {
+    this.addTab = function ( panel, label, customClass, atEnd = true, autoActivateTab = false ) {
       var customClass = customClass || panel.getAttribute(_options.customTabClassAttribute);
       var disabled = panel.hasAttribute(_options.disabledAttribute);
 
-      var generateTab = function ( index, id, tabPanel, customClass ) {
+      var generateTab = function ( index, id, tabPanel, customClass, atEnd ) {
+        var newRichTab = {};
+        var newTabWrapper = doc.createElement('div');
+        newTabWrapper.classList.add(_options.tabWrapperClass);
+        newTabWrapper.setAttribute('role', 'presentation');
+
         var newTab = doc.createElement('span');
         newTab.id = elID + '_tab_' + index;
         newTab.tabIndex = -1;
@@ -221,10 +243,18 @@ var util = {
           newTab.addEventListener('focus', util.preventFocus.bind(this));
         } else {
           newTab.addEventListener('click', function () {
-            onClick.call(this, index);
+            onClick.call(this);
             this.focus();
             updateUrlHash();
           }, false);
+
+          newTab.addEventListener('focus', function() {
+            newTabWrapper.classList.add('focused');
+          });
+
+          newTab.addEventListener('blur', function() {
+            newTabWrapper.classList.remove('focused');
+          });
 
           newTab.addEventListener('keydown', tabElementPress.bind(this), false);
           //newTab.addEventListener('focus', function () {
@@ -232,7 +262,33 @@ var util = {
           //}, false);
         }
 
-        return newTab;
+        newTabWrapper.appendChild(newTab);
+
+        newRichTab.tab = newTab;
+
+        if (_options.closeable) {
+          var newBtnClose = null;
+          newBtnClose = doc.createElement('button');
+          newBtnClose.classList.add(_options.btnCloseClass);
+          newBtnClose.innerHTML = '<span><svg aria-hidden="true" focusable="false" height="12" width="12"><line x1="2" y1="2" x2="10" y2="10" style="stroke:currentColor; stroke-width:2" /><line x1="2" y1="10" x2="10" y2="2" style="stroke:currentColor; stroke-width:2" /></svg><span class="visually-hidden">' + 'Close tab' + '</span></span>' ;
+          newBtnClose.tabIndex = -1;
+          newBtnClose.addEventListener('keydown', tabElementPress.bind(this), false);
+          newBtnClose.addEventListener('click', function () {
+            onClose.call(this);
+          }, false);
+
+          if (disabled) {
+            newBtnClose.setAttribute('disabled', true);
+          }
+
+          newTabWrapper.appendChild(newBtnClose);
+          newRichTab.close = newBtnClose;
+        }
+
+        newRichTab.tabWrapper = newTabWrapper;
+        newRichTab.textLabel = tabPanel;
+
+        return newRichTab;
       };
 
       var newPanel = panel;
@@ -254,9 +310,14 @@ var util = {
           })[0];
 
       var newId = newPanel.id || elID + '_panel_' + i;
-      var t = generateTab(i, newId, finalLabel, customClass);
+      var richTab = generateTab(i, newId, finalLabel, customClass);
 
-      _tabListContainer.appendChild(t);
+      if (atEnd) {
+        _tabListContainer.append(richTab.tabWrapper);
+      } else {
+        _tabListContainer.prepend(richTab.tabWrapper);
+      }
+
       newPanel.id = newId;
       newPanel.setAttribute('role', 'tabpanel');
       newPanel.setAttribute('aria-labelledby', elID + '_tab_' + i);
@@ -284,10 +345,25 @@ var util = {
         newPanel.addEventListener('keydown', panelElementPress.bind(this), false);
         newPanel.addEventListener('blur', removePanelTabindex, false);
 
-        _tabs.push({
-          tab: t,
+        const newTabInfo = {
+          id: richTab.tab.id,
+          label: richTab.textLabel,
+          tabWrapper: richTab.tabWrapper,
+          tab: richTab.tab,
+          close: richTab.close,
           panel: newPanel
-        });
+        };
+
+        if (atEnd) {
+          _tabs.push(newTabInfo);
+        } else {
+          _tabs.unshift(newTabInfo);
+        }
+      }
+
+      if (autoActivateTab) {
+        activeIndex = atEnd ? _tabs.length - 1 : 0;
+        activateTab();
       }
     }; // this.addTab
 
@@ -317,6 +393,9 @@ var util = {
       }
     }; // buildTabs()
 
+    var getTabIndexById = function( id ) {
+      return _tabs.findIndex(obj => obj.id == id);
+    };
 
     var deleteTOC = function () {
       if ( el.getAttribute('data-atabs-toc') ) {
@@ -331,37 +410,73 @@ var util = {
     }; // deleteTOC()
 
 
-    var incrementActiveIndex = function () {
-      if ( activeIndex < _tabs.length - 1 ) {
+    var incrementActiveIndex = function ( wrapAround = true ) {
+      const indexFirst = 0;
+      const indexLast = _tabs.length - 1;
+      if ( activeIndex < indexLast) {
         return ++activeIndex;
       }
-      else {
-        activeIndex = 0;
+      else if (wrapAround) {
+        activeIndex = indexFirst;
         return activeIndex;
+      }
+      else {
+        return indexLast;
       }
     }; // incrementActiveIndex()
 
 
-    var decrementActiveIndex = function () {
-      if ( activeIndex > 0 ) {
+    var decrementActiveIndex = function ( wrapAround = true ) {
+      const indexFirst = 0;
+      const indexLast = _tabs.length - 1;
+      if ( activeIndex > indexFirst ) {
         return --activeIndex;
       }
-      else {
-        activeIndex = _tabs.length - 1;
+      else if (wrapAround) {
+        activeIndex = indexLast;
         return activeIndex;
+      }
+      else {
+        return indexFirst;
       }
     }; // decrementActiveIndex()
 
 
     var focusActiveTab = function () {
-      _tabs[activeIndex].tab.focus();
+      if (undefined !== _tabs[activeIndex]) {
+        _tabs[activeIndex].tab.focus();
+      }
     }; // focusActiveTab()
 
 
-    var onClick = function ( index ) {
-      activeIndex = index;
+    var removeTabAndPanel = function( index ) {
+
+      _tabs[index].panel.remove();
+      _tabs[index].tabWrapper.remove();
+      _tabs.splice(index, 1);
+
+      // activeIndex = 0;
+
+
+      if (index >= _tabs.length) {
+        decrementActiveIndex(false);
+      }
+
+      focusActiveTab();
+      activateTab();
+      updateUrlHash();
+
+    }; // removeTabAndPanel()
+
+    var onClick = function () {
+      activeIndex = getTabIndexById(this.id)
       activateTab();
     }; // onClick()
+
+    var onClose = function () {
+      const index = getTabIndexById(this.previousSibling.id)
+      removeTabAndPanel(index);
+    }; // onClose()
 
 
     var moveBack = function ( e ) {
@@ -415,6 +530,8 @@ var util = {
 
     var tabElementPress = function ( e ) {
       var keyCode = e.keyCode || e.which;
+      const canRemove = true;
+      const isTab = e.target.classList.contains(_options.tabClass);
 
       switch ( keyCode ) {
         case util.keyCodes.TAB:
@@ -424,9 +541,11 @@ var util = {
 
         case util.keyCodes.ENTER:
         case util.keyCodes.SPACE:
-          e.preventDefault();
-          activateTab();
-          updateUrlHash();
+          if (isTab) {
+            e.preventDefault();
+            activateTab();
+            updateUrlHash();
+          }
           break;
 
         case util.keyCodes.LEFT:
@@ -460,7 +579,7 @@ var util = {
           break;
 
         case util.keyCodes.DELETE:
-          if ( _tabs.length > 1 && canRemove ) {
+          if ( _tabs.length > 0 && canRemove ) {
             e.preventDefault();
             removeTabAndPanel(activeIndex);
             focusActiveTab();
@@ -508,6 +627,11 @@ var util = {
       _tabs[idx].tab.tabIndex = -1;
       _tabs[idx].tab.setAttribute('aria-selected', false);
       _tabs[idx].tab.removeAttribute('aria-controls');
+      _tabs[idx].tabWrapper.classList.remove('selected');
+
+      if (_options.closeable) {
+        _tabs[idx].close.tabIndex = -1;
+      }
       // remove the aria-controls from inactive tabs since
       // a user can *not* move to their associated element
       // if that element is not displayed.
@@ -521,10 +645,19 @@ var util = {
      */
     var activateTab = function () {
       var active = _tabs[activeIndex] || _tabs[0];
+
+      if (undefined === active) {
+        return null;
+      }
+
       deactivateTabs();
       active.tab.setAttribute('aria-controls', active.tab.getAttribute('data-controls'));
       active.tab.setAttribute('aria-selected', true);
+      active.tabWrapper.classList.add('selected');
       active.tab.tabIndex = 0;
+      if (_options.closeable) {
+        active.close.tabIndex = 0;
+      }
       if ( !active.panel.hasAttribute(_options.disabledAttribute) ) {
         active.panel.hidden = false;
       }
@@ -538,6 +671,11 @@ var util = {
      */
     var updateUrlHash = function () {
       var active = _tabs[activeIndex];
+
+      if (undefined === active) {
+        return null;
+      }
+
       util.setUrlHash(active.tab.getAttribute('data-controls'));
     }; // updateUrlHash()
 

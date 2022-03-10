@@ -18,7 +18,7 @@ header nav a {
 	margin-right: 1em;
 }
 
-header nav a:first-of-type {
+header nav a:not(:last-of-type) {
 	border-right: 1px solid;
 	padding-right: 1em;
 }
@@ -26,4 +26,14 @@ header nav a:first-of-type {
 a[href]:focus {
 	outline: 2px solid;
 	outline-offset: 2px;
+}
+
+.visually-hidden {
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  height: 1px;
+  overflow: hidden;
+  position: absolute;
+  white-space: nowrap;
+  width: 1px;
 }
