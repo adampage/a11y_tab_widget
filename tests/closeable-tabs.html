@@ -337,6 +337,37 @@
                     do, if at all?
                 </li>
             </ul>
+            <h3>Additional feedback</h3>
+            <ul>
+                <li>
+                    Is <code>role="presentation"</code> actually achieving
+                    anything for wrapping the tab and the close button?
+                </li>
+                <li>
+                    Take care to manage focus correctly for RTL directionality
+                    (and others?) on deletion (i.e., ARIA recommend *next* tab
+                    gets focus, which would be on left for RTL)
+                </li>
+                <li>What is a good experience for deleting the last tab?
+                    <ul>
+                        <li>Prevent deletion of the last tab altogether?</li>
+                        <li>Automatically insert a "blank" tab with feedback?</li>
+                        <li>
+                            Allow it, but have a sensible default with hook for
+                            contextual fallback: Focus works its way back up to
+                            the previous heading?  Previous interactive element?
+                            Next interactive element?
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    Optional user confirmation required for deletion? Some
+                    contexts may need this to satisfy WCAG AA 3.3.4. Prototype
+                    and get visual design direction later.  But still make
+                    optional, and on a tab-by-tab basis (e.g., unsaved content
+                    in one tab).
+                </li>
+            </ul>
         </article>
 
     </main>
